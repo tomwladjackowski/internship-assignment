@@ -6,7 +6,7 @@ class DistanceRange(BaseModel) :
     a: int
     b: int
 
-class Venue(BaseModel) :
+class VenueData(BaseModel) :
     venue_coordinates: List[int]
     min_cart_value: int
     base_price: int
