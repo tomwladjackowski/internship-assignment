@@ -1,4 +1,5 @@
-from pydantic import BaseModel, List
+from pydantic import BaseModel
+from typing import List
 
 class DistanceRange(BaseModel) :
     min: int
@@ -21,6 +22,7 @@ class DeliveryInputModel(BaseModel) :
 class DeliveryFeeModel(BaseModel) :
     fee: int 
     distance: int
+
 class DeliveryOutputModel(BaseModel) :
     total_price: int
     small_order_surcharge: int
