@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 
 class DistanceRange(BaseModel) :
@@ -15,12 +15,12 @@ class VenueData(BaseModel) :
 
 class DeliveryInputModel(BaseModel) :
     venue_slug: str
-    cart_value: int
-    user_lat: float
-    user_lon: float
+    cart_value: int = Field(ge=0)
+    user_lat: float = Field(ge = -90, le = 90)
+    user_lon: float = Field(ge = -180, le = 180)
 
 class DeliveryFeeModel(BaseModel) :
-    fee: int 
+    fee: int
     distance: int
 
 class DeliveryOutputModel(BaseModel) :

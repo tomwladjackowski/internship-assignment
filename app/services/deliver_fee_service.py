@@ -2,14 +2,16 @@ from fastapi import HTTPException
 import requests
 import haversine as hs
 from haversine import Unit
+from typing import Tuple, List
+from app.models.schemas import DistanceRange
 
 from app.models.schemas import VenueData, DeliveryOutputModel, DistanceRange
 
-def get_static_venue_data(venue_slug) :
+def get_static_venue_data(venue_slug: str) :
     return requests.get(f"https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/{venue_slug}/static").json()
 
         
-def get_dynamic_venue_data(venue_slug) :
+def get_dynamic_venue_data(venue_slug: str) :
     return requests.get(f"https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/{venue_slug}/dynamic").json()
 
 def parse_venue_data(static_venue_data, dynamic_venue_data) -> VenueData :
@@ -25,10 +27,10 @@ def parse_venue_data(static_venue_data, dynamic_venue_data) -> VenueData :
     }
     return venue_data 
 
-def calculate_distance(user_coordinates, venue_coordinates) :
+def calculate_distance(user_coordinates: Tuple[float, float], venue_coordinates: Tuple[float, float]) -> int :
     return round(hs.haversine(user_coordinates, venue_coordinates, unit = Unit.METERS))
 
-def find_distance_range(distance: int, distance_ranges) :
+def find_distance_range(distance: int, distance_ranges: List[DistanceRange]) -> DistanceRange:
     start = 0
     end = len(distance_ranges) - 1
     middle = 0
@@ -42,7 +44,7 @@ def find_distance_range(distance: int, distance_ranges) :
             return distance_ranges[middle]
     return None
 
-def calculate_distance_fee(base_price, distance, distance_ranges) :
+def calculate_distance_fee(base_price: int, distance: int, distance_ranges: List[DistanceRange]) -> int:
     # we need to first check which range does the distance fall inside, also take care of 
     # edge cases when distance is at the end of one range and beginning of another one
     # if our distance is above the range where max = 0 than delivery is not possible
@@ -62,7 +64,6 @@ def calculate_delivery_fee(venue_slug: str, cart_value: int, user_lat:float, use
     static_venue_data = get_static_venue_data(venue_slug)
     dynamic_venue_data = get_dynamic_venue_data(venue_slug)
     parsed_venue_data = parse_venue_data(static_venue_data, dynamic_venue_data)
-    print(parsed_venue_data["venue_coordinates"])
     user_coordinates = [user_lon, user_lat]    
     distance = calculate_distance(user_coordinates, parsed_venue_data["venue_coordinates"])
     distance_fee = calculate_distance_fee(parsed_venue_data["base_price"], distance, parsed_venue_data["distance_ranges"])
@@ -74,6 +75,7 @@ def calculate_delivery_fee(venue_slug: str, cart_value: int, user_lat:float, use
 
     if cart_value <= parsed_venue_data["min_cart_value"] :
         small_order_surcharge = parsed_venue_data["min_cart_value"] - cart_value
+        
     total_price = cart_value + small_order_surcharge + distance_fee
 
     return {
