@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-from typing import List
 
 class DistanceRange(BaseModel) :
     min: int
@@ -8,10 +7,10 @@ class DistanceRange(BaseModel) :
     b: int
 
 class VenueData(BaseModel) :
-    venue_coordinates: List[int]
+    venue_coordinates: list[float]
     min_cart_value: int
     base_price: int
-    distance_ranges: List[DistanceRange]
+    distance_ranges: list[DistanceRange]
 
 class DeliveryInputModel(BaseModel) :
     venue_slug: str
