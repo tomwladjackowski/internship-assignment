@@ -8,34 +8,55 @@ from app.models.schemas import VenueData, DeliveryOutputModel, DistanceRange
 def get_static_venue_data(venue_slug: str) :
     try: 
         response = requests.get(f"https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/{venue_slug}/static")
+        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
         return response.json()
-    except HTTPError as http_err:
-        raise HTTPException(status_code=response.status_code, detail=f"HTTP error: {http_err}")
+    except HTTPError:
+        try:
+            error_message = response.json().get("message", "No error message provided")
+        except ValueError:  # response.json() can fail if the response isn't JSON
+            error_message = response.text
+        
+        raise HTTPException(
+            status_code=response.status_code,
+            detail=f"HTTP error occurred: {error_message}",
+        )
     except RequestException as req_err:
         raise HTTPException(status_code=500, detail=f"Error connecting to the Home Assignment API: {req_err}")
 
 def get_dynamic_venue_data(venue_slug: str) :
     try: 
         response = requests.get(f"https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/{venue_slug}/dynamic")
+        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
         return response.json()
-    except HTTPError as http_err:
-        raise HTTPException(status_code=response.status_code, detail=f"HTTP error: {http_err}")
+    except HTTPError:
+        try:
+            error_message = response.json().get("message", "No error message provided")
+        except ValueError:  # response.json() can fail if the response isn't JSON
+            error_message = response.text
+        
+        raise HTTPException(
+            status_code=response.status_code,
+            detail=f"HTTP error occurred: {error_message}",
+        )
     except RequestException as req_err:
         raise HTTPException(status_code=500, detail=f"Error connecting to the Home Assignment API: {req_err}")
 
 def parse_venue_data(static_venue_data, dynamic_venue_data) -> VenueData :
-    venue_coordinates = static_venue_data['venue_raw']['location']['coordinates']
-    venue_coordinates.reverse()
-    min_cart_value = dynamic_venue_data['venue_raw']['delivery_specs']['order_minimum_no_surcharge']
-    base_price = dynamic_venue_data['venue_raw']['delivery_specs']['delivery_pricing']['base_price']
-    distance_ranges = dynamic_venue_data['venue_raw']['delivery_specs']['delivery_pricing']['distance_ranges']
-    venue_data = {
-        "venue_coordinates": venue_coordinates,
-        "min_cart_value": min_cart_value,
-        "base_price": base_price,
-        "distance_ranges": distance_ranges
-    }
-    return venue_data 
+    try:
+        venue_coordinates = static_venue_data['venue_raw']['location']['coordinates']
+        venue_coordinates.reverse()
+        min_cart_value = dynamic_venue_data['venue_raw']['delivery_specs']['order_minimum_no_surcharge']
+        base_price = dynamic_venue_data['venue_raw']['delivery_specs']['delivery_pricing']['base_price']
+        distance_ranges = dynamic_venue_data['venue_raw']['delivery_specs']['delivery_pricing']['distance_ranges']
+        venue_data = {
+            "venue_coordinates": venue_coordinates,
+            "min_cart_value": min_cart_value,
+            "base_price": base_price,
+            "distance_ranges": distance_ranges
+        }
+        return venue_data
+    except KeyError as error:
+        raise ValueError(f"Missing required key in input data: {error}") 
 
 def calculate_distance(user_coordinates: list[float], venue_coordinates: list[float]) -> int :
     return round(hs.haversine(user_coordinates, venue_coordinates, unit = Unit.METERS))
@@ -58,8 +79,8 @@ def calculate_distance_fee(base_price: int, distance: int, distance_ranges: list
     if distance >= distance_ranges[len(distance_ranges) - 1]['min'] :
         return None
     range = find_distance_range(distance, distance_ranges)
-    # if range == None :
-    #     ra
+    if range == None:
+        raise HTTPException(status_code=400, detail="Error, cannot find range for delivery distance")
     constant_a = range['a']
     multiplier_b = range['b']
     delivery_surcharge = round((distance * multiplier_b) / 10)

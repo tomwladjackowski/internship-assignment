@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.models.schemas import DeliveryOutputModel, DeliveryInputModel
-from app.services.deliver_fee_service import calculate_delivery_fee
+from app.services.delivery_fee_service import calculate_delivery_fee
 
 router = APIRouter()
 
