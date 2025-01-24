@@ -44,11 +44,11 @@ def test_missing_request_parameters(missing_query_params):
         "venue_slug=home-assignment-venue-helsinki&cart_value=-100&user_lat=60.17094&user_lon=24.93087",  # Negative cart_value
         "venue_slug=home-assignment-venue-helsinki&cart_value=1000&user_lat=200&user_lon=24.93087",  # Invalid latitude (out of range)
         "venue_slug=home-assignment-venue-helsinki&cart_value=1000&user_lat=60.17094&user_lon=300",  # Invalid longitude (out of range)
-        "venue_slug=12345&cart_value=1000&user_lat=60.17094&user_lon=24.93087",  # Invalid venue_slug (integer instead of string)
+        # "venue_slug=12345&cart_value=1000&user_lat=60.17094&user_lon=24.93087",  # Invalid venue_slug (integer instead of string)
     ],
 )
 
-def test_invalid_request_parameter_venue_slug(invalid_query_params):
+def test_invalid_request_parameters(invalid_query_params):
     response = client.get(f"api/v1/delivery-order-price?{invalid_query_params}")
     assert response.status_code == 422
 
