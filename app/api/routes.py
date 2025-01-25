@@ -4,8 +4,8 @@ from app.services.delivery_fee_service import calculate_delivery_fee
 
 router = APIRouter()
 
-@router.get("/")
-def main_route():
+@router.get("/health")
+def health_route():
     return {"message": "Server is running"}
 
 @router.get("/api/v1/delivery-order-price", response_model = DeliveryOutputModel)
