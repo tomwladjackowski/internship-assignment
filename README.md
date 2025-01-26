@@ -23,6 +23,10 @@ It integrates with Home Assignment API to get data about the venue and calculate
 
 ## Installing the application
 
+### Requirements
+ - **Python** >= 3.10 and **pip**
+ - **Docker** if you'd like to run with **Docker**
+
 ```bash
 # Clone the repository
 $ git clone https://github.com/your-repo/project-name.git
@@ -42,8 +46,26 @@ $ pip install -r requirements.txt
 
 ## Usage
 
+The API has two endpoints:
+    1.'GET' '/health' - responds to a GET requests with status 200 to show the server is running
+    2.'GET' '/api/v1/deliver-order-price-service' - endpoint for our delivery price calculation service
 
-
+delivery-order-price-service requires following query parameters:
+    1.venue_slug (string): The unique identifier (slug) for the venue from which the delivery order will be placed
+    2.cart_value: (integer): The total value of the items in the shopping cart
+    3.user_lat (number with decimal point): The latitude of the user's location
+    4.user_lon (number with decimal point): The longitude of the user's location
+and returns a response in the following format:
+    {
+    "total_price": 1190,
+    "small_order_surcharge": 0,
+    "cart_value": 1000,
+    "delivery": {
+        "fee": 190,
+        "distance": 177
+    }
+    }
+    
 ### Running the Application:
 ```bash
 $ uvicorn main:app --reload
