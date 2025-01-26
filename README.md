@@ -21,9 +21,7 @@ It integrates with Home Assignment API to get data about the venue and calculate
 
 ---
 
-## Installation
-
-Step-by-step instructions on how to install and set up the project locally.
+## Installing the application
 
 ```bash
 # Clone the repository
@@ -42,20 +40,6 @@ $ pip install -r requirements.txt
 
 ---
 
-### Running with Docker:
-
-Build and run the Docker container:
-```bash
-# Build the Docker image
-docker build -t project-name .
-
-# Run the Docker container
-docker run -p 8000:8000 project-name
-```
-The project server should now be running at localhost:8000.
-
----
-
 ## Usage
 
 
@@ -67,7 +51,8 @@ $ uvicorn main:app --reload
 
 ### Example API Call:
 ```bash
-GET /api/v1/delivery-order-price
+GET /api/v1/delivery-order-price?venue_slug=home-assignment-venue-helsinki&cart_value=1000&user_lat=60.17094&user_lon=24.93087
+
 ```
 Query Parameters:
 - `cart_value`: Total value of the cart.
@@ -78,8 +63,6 @@ Query Parameters:
 ---
 
 ## Testing
-
-Provide instructions on how to run the test suite for the project.
 
 ### Running Tests:
 ```bash
