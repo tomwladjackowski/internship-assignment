@@ -47,24 +47,34 @@ $ pip install -r requirements.txt
 ## Usage
 
 The API has two endpoints:
-    1.'GET' '/health' - responds to a GET requests with status 200 to show the server is running
-    2.'GET' '/api/v1/deliver-order-price-service' - endpoint for our delivery price calculation service
+- 1.'GET' '/health' - responds to a GET requests with status 200 to show the server is running
+- 2.'GET' '/api/v1/deliver-order-price-service' - endpoint for our delivery price calculation service
 
 delivery-order-price-service requires following query parameters:
-    1.venue_slug (string): The unique identifier (slug) for the venue from which the delivery order will be placed
-    2.cart_value: (integer): The total value of the items in the shopping cart
-    3.user_lat (number with decimal point): The latitude of the user's location
-    4.user_lon (number with decimal point): The longitude of the user's location
+- 1.venue_slug (string): The unique identifier (slug) for the venue from which the delivery order will be placed
+- 2.cart_value: (integer): The total value of the items in the shopping cart
+- 3.user_lat (number with decimal point): The latitude of the user's location
+- 4.user_lon (number with decimal point): The longitude of the user's location
+
 and returns a response in the following format:
+```json
     {
-    "total_price": 1190,
-    "small_order_surcharge": 0,
-    "cart_value": 1000,
-    "delivery": {
-        "fee": 190,
-        "distance": 177
+        "total_price": 1190,
+        "small_order_surcharge": 0,
+        "cart_value": 1000,
+        "delivery": {
+            "fee": 190,
+            "distance": 177
+        }
     }
-    }
+```
+where
+* `total_price` (integer): The calculated total price
+* `small_order_surcharge` (integer): The calculated small order surcharge
+* `cart_value` (integer): The cart value. This is the same as what was got as query parameter.
+* `delivery` (object): An object containing:
+  * `fee` (integer): The calculated delivery fee
+  * `distance` (integer): The calculated delivery distance in meters
     
 ### Running the Application:
 ```bash
