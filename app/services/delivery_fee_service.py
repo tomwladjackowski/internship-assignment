@@ -1,11 +1,10 @@
 import haversine as hs
 from haversine import Unit
-from app.models.schemas import DeliveryOutputModel, DistanceRange
+from app.models.schemas import DeliveryOutputModel, DistanceRange, Coordinates
 from app.exceptions.exceptions import DistanceRangeNotFoundError, DistanceTooLargeError
-from app.services.venue_data_service import get_dynamic_venue_data, get_static_venue_data, parse_venue_data
+from app.services.venue_data_service import get_venue_data
 
-
-def calculate_distance(user_coordinates: list[float], venue_coordinates: list[float]) -> int :
+def calculate_distance(user_coordinates: Coordinates, venue_coordinates: Coordinates) -> int :
     return round(hs.haversine(user_coordinates, venue_coordinates, unit = Unit.METERS))
 
 def find_distance_range(distance: int, distance_ranges: list[DistanceRange]) -> DistanceRange:
@@ -35,21 +34,16 @@ def calculate_distance_fee(base_price: int, distance: int, distance_ranges: list
 
     return base_price + constant_a + delivery_surcharge
 
+def get_small_order_surcharge(cart_value: int, min_cart_value: int) -> int :
+    return min_cart_value - cart_value if cart_value <= min_cart_value else 0
+
 def calculate_delivery_fee(venue_slug: str, cart_value: int, user_lat:float, user_lon: float) -> DeliveryOutputModel:
-    
-    static_venue_data = get_static_venue_data(venue_slug)
-    dynamic_venue_data = get_dynamic_venue_data(venue_slug)
-    parsed_venue_data = parse_venue_data(static_venue_data, dynamic_venue_data)
-    user_coordinates = [user_lat, user_lon]
+    venue_data = get_venue_data(venue_slug)
+    user_coordinates = Coordinates(latitude=user_lat, longitude=user_lon)
 
-    distance = calculate_distance(user_coordinates, parsed_venue_data["venue_coordinates"])
-    
-    distance_fee = calculate_distance_fee(parsed_venue_data["base_price"], distance, parsed_venue_data["distance_ranges"])
-    
-    small_order_surcharge = 0
-
-    if cart_value <= parsed_venue_data["min_cart_value"] :
-        small_order_surcharge = parsed_venue_data["min_cart_value"] - cart_value
+    distance = calculate_distance(user_coordinates, venue_data["venue_coordinates"])
+    distance_fee = calculate_distance_fee(venue_data["base_price"], distance, venue_data["distance_ranges"])
+    small_order_surcharge = get_small_order_surcharge(cart_value, venue_data["min_cart_value"])
 
     total_price = cart_value + small_order_surcharge + distance_fee
 
