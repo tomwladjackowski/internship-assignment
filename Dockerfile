@@ -1,5 +1,5 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
-FROM python:3.9
+FROM python:3.11-slim
 
 EXPOSE 8000
 
@@ -9,6 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
+ENV HOME_ASSIGNMENT_API_BASE_URL="https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues"
 # Install pip requirements
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt

@@ -1,6 +1,6 @@
 # Wolt Internship Backend Project
 
-This is a project made as a part of appliaction for the Backend Engineer Internship 2025 Programme at Wolt
+This is a project made as a part of an appliaction for the Backend Engineer Internship 2025 Programme at Wolt.
 ---
 
 ## Table of Contents
@@ -13,13 +13,13 @@ This is a project made as a part of appliaction for the Backend Engineer Interns
 
 ---
 
+
 ## Overview
 
 This Python project is a service that calculates the total price and price breakdown of a delivery order.
 It integrates with Home Assignment API to get data about the venue and calculates the price based on the date included in the query. It is made using FastAPI framework for Python.
 
 ---
-
 
 ## Installation
 
@@ -52,13 +52,13 @@ docker build -t project-name .
 # Run the Docker container
 docker run -p 8000:8000 project-name
 ```
-The project server should be running at localhost:8000.
+The project server should now be running at localhost:8000.
 
 ---
 
 ## Usage
 
-How to use the project. Include example commands or API endpoint usage if applicable.
+
 
 ### Running the Application:
 ```bash
@@ -86,7 +86,7 @@ Provide instructions on how to run the test suite for the project.
 $ pytest
 ```
 
-Ensure you have all necessary test dependencies installed by checking the `requirements-dev.txt` file.
+Ensure you have all necessary test dependencies installed by checking the `requirements.txt` file.
 
 ---
 

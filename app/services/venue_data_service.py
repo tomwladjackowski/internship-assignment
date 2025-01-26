@@ -20,10 +20,9 @@ def build_dynamic_venue_url(venue_slug: str) -> str:
     return f"{API_BASE_URL}/{venue_slug}/dynamic"
 
 def handle_http_error(response):
-    """Extract error message and raise an HTTPException."""
     try:
         error_message = response.json().get("message", "No error message provided")
-    except ValueError:  # Handles cases where the response isn't JSON
+    except ValueError:
         error_message = response.text
     
     raise HTTPException(
@@ -32,7 +31,6 @@ def handle_http_error(response):
     )
 
 def get_static_venue_data(venue_slug: str):
-    """Fetch static venue data"""
     url = build_static_venue_url(venue_slug)
     print(url)
     try:

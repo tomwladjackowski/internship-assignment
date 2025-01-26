@@ -26,8 +26,8 @@ def calculate_distance_fee(base_price: int, distance: int, distance_ranges: list
         raise DistanceTooLargeError("Delivery not possible, distance too large")
     try:
         range = find_distance_range(distance, distance_ranges)
-    except DistanceTooLargeError as error:
-        print(error)
+    except DistanceRangeNotFoundError as error:
+        raise error
     constant_a = range['a']
     multiplier_b = range['b']
     delivery_surcharge = round((distance * multiplier_b) / 10)
@@ -40,7 +40,7 @@ def get_small_order_surcharge(cart_value: int, min_cart_value: int) -> int :
 def calculate_delivery_fee(venue_slug: str, cart_value: int, user_lat:float, user_lon: float) -> DeliveryOutputModel:
     venue_data = get_venue_data(venue_slug)
     user_coordinates = Coordinates(latitude=user_lat, longitude=user_lon)
-
+    print(user_coordinates)
     distance = calculate_distance(user_coordinates, venue_data["venue_coordinates"])
     distance_fee = calculate_distance_fee(venue_data["base_price"], distance, venue_data["distance_ranges"])
     small_order_surcharge = get_small_order_surcharge(cart_value, venue_data["min_cart_value"])
