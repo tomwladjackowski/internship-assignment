@@ -1,9 +1,9 @@
 from typing import NamedTuple
 from pydantic import BaseModel, Field
 
-# class Coordinates(NamedTuple) :
-#     latitude: float = Field(ge = -90, le = 90)
-#     longitude:float = Field(ge = -180, le = 180)
+class Coordinates(NamedTuple) :
+    latitude: float = Field(ge = -90, le = 90)
+    longitude: float = Field(ge = -180, le = 180)
 
 class DistanceRange(BaseModel) :
     min: int
@@ -12,7 +12,7 @@ class DistanceRange(BaseModel) :
     b: int
 
 class VenueData(BaseModel) :
-    venue_coordinates: list[float]
+    venue_coordinates: Coordinates
     min_cart_value: int
     base_price: int
     distance_ranges: list[DistanceRange]
